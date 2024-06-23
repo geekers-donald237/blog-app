@@ -1,9 +1,12 @@
 import 'package:blog_app/core/theme/app_color_palette.dart';
+import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blog_app/features/auth/presentation/pages/login_page.dart';
 import 'package:blog_app/utils/sizer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
+
 import '../widgets/auth_button.dart';
 import '../widgets/auth_field.dart';
 
@@ -15,7 +18,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
@@ -34,7 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding:  EdgeInsets.all(10.dp),
+        padding: EdgeInsets.all(10.dp),
         child: Form(
           key: formKey,
           child: SingleChildScrollView(
@@ -62,21 +64,28 @@ class _SignUpPageState extends State<SignUpPage> {
                   hintText: 'Name',
                   controller: nameController,
                 ),
-                 SizedBox(height: getHeight(15)),
+                SizedBox(height: getHeight(15)),
                 AuthField(
                   hintText: 'Email',
                   controller: emailController,
                 ),
-                 SizedBox(height: getHeight(15)),
+                SizedBox(height: getHeight(15)),
                 AuthField(
                   hintText: 'Password',
                   controller: passwordController,
                   isObscureText: true,
                 ),
-                 SizedBox(height: getHeight(20)),
+                SizedBox(height: getHeight(20)),
                 AuthGradientButton(
                   buttonText: 'Sign Up',
-                  onPressed: () {},
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      context.read<AuthBloc>().add(AuthSignup(
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                          name: nameController.text.trim()));
+                    }
+                  },
                 ),
                 SizedBox(height: getHeight(20)),
                 GestureDetector(
@@ -91,21 +100,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: RichText(
                       text: TextSpan(
                         text: 'Already have an account? ',
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium,
+                        style: Theme.of(context).textTheme.titleMedium,
                         children: [
                           TextSpan(
                             text: 'Sign In',
-                            style: Theme
-                                .of(context)
+                            style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
                                 ?.copyWith(
-                              color: AppColorsPalette.gradient2,
-                              fontWeight: FontWeight.bold,
-                            ),
+                                  color: AppColorsPalette.gradient2,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                         ],
                       ),
